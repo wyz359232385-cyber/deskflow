@@ -1,0 +1,175 @@
+# DeskFlow 规则表
+# 改完保存即可生效，不需要改代码。扩展名一律小写、带点；值是归档根下的文件夹名。
+# 未命中任何规则的文件进入「未分类/」，绝不猜测、绝不删除。
+
+[settings]
+# 公开默认值。本机真实路径请写在 config/local.toml（该文件不入库），
+# 它会覆盖这里的同名设置，这样仓库里不会带出个人目录名。
+archive_root = "~/文件归档"
+dry_run = true                  # 首周只读预演：true = 只记录「打算搬去哪」，不动文件
+stable_window_seconds = 5       # 文件大小和修改时间连续稳定多久，才认定写入完成
+settle_poll_seconds = 1         # 待处理队列的轮询间隔
+recursive = false               # 只盯入口目录顶层，不递归进程序文件夹
+
+[entry_dirs]
+# "auto" 表示调用 Windows 已知文件夹 API 取真实路径（桌面可能已被重定向）
+desktop = "auto"
+# 2026-11-15 首次实测：下载目录有 437 项，其中 324 项是某驱动安装包解压出的
+# .dl_/.ch_/.dll 等碎片。开实时监控会把安装包拆散，故默认不纳入入口。
+# 确认过下载目录内容后，取消下面两行注释即可扩大范围。
+# downloads = "auto"
+# documents = "auto"
+
+[exclude]
+# 永远不动的文件名
+names = ["desktop.ini", "thumbs.db", ".DS_Store", "desktop.ini"]
+# 永远不动的扩展名：下载/编辑中间态 + 驱动与安装包解压碎片
+# 后者（.dl_ .ch_ .in_ .da_ .ex_ .sy_ .ds_ .dsi .dll .winmd .cat .inf）
+# 通常是同一安装程序的一部分，逐个搬走会破坏安装，因此一律保持原位。
+extensions = [
+  ".tmp", ".crdownload", ".part", ".partial", ".!ut", ".downloading", ".swp", ".lock", ".lnk.tmp",
+  ".dl_", ".ch_", ".in_", ".da_", ".ex_", ".sy_", ".ds_", ".dsi", ".dll", ".winmd", ".cat", ".inf",
+]
+# 文件名以这些结尾也跳过（编辑器备份、临时文件）
+suffixes = ["~", ".tmp", ".part", ".crdownload", ".swp"]
+# 这些目录整个跳过
+dirs = ["node_modules", ".git", ".venv", "__pycache__", "$RECYCLE.BIN", "System Volume Information"]
+# 归档根自身会由代码强制排除，避免监控把自己搬进去的文件又搬一次
+
+[desktop_intake]
+# 入口目录里的子文件夹整体收进这里，不拆散（可能是程序目录、项目目录）
+folder = "文件夹归档"
+# 快捷方式由 [extensions] 的 ".lnk" 规则决定，这里只是说明去向
+shortcuts = "快捷方式"
+
+[timeline]
+filename = "_时间线.html"       # 生成在归档根下，可用 --output 覆盖
+
+[extensions]
+# --- 文档 ---
+".doc" = "Microsoft Word"
+".docx" = "Microsoft Word"
+".dot" = "Microsoft Word"
+".dotx" = "Microsoft Word"
+".docm" = "Microsoft Word"
+".rtf" = "Microsoft Word"
+".odt" = "LibreOffice"
+".wps" = "WPS Office"
+".xls" = "Microsoft Excel"
+".xlsx" = "Microsoft Excel"
+".xlsm" = "Microsoft Excel"
+".xlsb" = "Microsoft Excel"
+".csv" = "Microsoft Excel"
+".ods" = "LibreOffice"
+".et" = "WPS Office"
+".ppt" = "Microsoft PowerPoint"
+".pptx" = "Microsoft PowerPoint"
+".ppsx" = "Microsoft PowerPoint"
+".odp" = "LibreOffice"
+".dps" = "WPS Office"
+".pdf" = "PDF 文档"
+".txt" = "文本编辑器"
+".md" = "文本编辑器"
+".markdown" = "文本编辑器"
+".log" = "文本编辑器"
+".epub" = "电子书"
+".mobi" = "电子书"
+
+# --- 图片与设计 ---
+".psd" = "Adobe Photoshop"
+".psb" = "Adobe Photoshop"
+".xd" = "Adobe XD"
+".ai" = "Adobe Illustrator"
+".eps" = "Adobe Illustrator"
+".xcf" = "GIMP"
+".fig" = "Figma"
+".sketch" = "Sketch"
+".png" = "图片"
+".jpg" = "图片"
+".jpeg" = "图片"
+".gif" = "图片"
+".bmp" = "图片"
+".webp" = "图片"
+".tif" = "图片"
+".tiff" = "图片"
+".heic" = "图片"
+".svg" = "图片"
+".ico" = "图片"
+".raw" = "相机 RAW"
+".cr2" = "相机 RAW"
+".cr3" = "相机 RAW"
+".nef" = "相机 RAW"
+".arw" = "相机 RAW"
+".dng" = "相机 RAW"
+
+# --- 影音 ---
+".mp4" = "视频"
+".mov" = "视频"
+".mkv" = "视频"
+".avi" = "视频"
+".wmv" = "视频"
+".flv" = "视频"
+".webm" = "视频"
+".m4v" = "视频"
+".mp3" = "音频"
+".wav" = "音频"
+".flac" = "音频"
+".aac" = "音频"
+".m4a" = "音频"
+".ogg" = "音频"
+".prproj" = "Adobe Premiere"
+".aep" = "Adobe After Effects"
+".drp" = "DaVinci Resolve"
+".srt" = "字幕"
+".ass" = "字幕"
+
+# --- 代码与数据 ---
+".py" = "Python"
+".ipynb" = "Python"
+".js" = "前端代码"
+".ts" = "前端代码"
+".jsx" = "前端代码"
+".tsx" = "前端代码"
+".html" = "前端代码"
+".css" = "前端代码"
+".java" = "代码工程"
+".c" = "代码工程"
+".cpp" = "代码工程"
+".h" = "代码工程"
+".go" = "代码工程"
+".rs" = "代码工程"
+".cs" = "代码工程"
+".sh" = "代码工程"
+".sql" = "数据库"
+".db" = "数据库"
+".sqlite" = "数据库"
+".json" = "配置文件"
+".yaml" = "配置文件"
+".yml" = "配置文件"
+".toml" = "配置文件"
+".xml" = "配置文件"
+".ini" = "配置文件"
+
+# --- 压缩包与安装包 ---
+".zip" = "压缩工具"
+".rar" = "压缩工具"
+".7z" = "压缩工具"
+".tar" = "压缩工具"
+".gz" = "压缩工具"
+".bz2" = "压缩工具"
+".exe" = "安装包"
+".msi" = "安装包"
+".msix" = "安装包"
+".appx" = "安装包"
+
+# --- 工程与其他 ---
+".dwg" = "AutoCAD"
+".dxf" = "AutoCAD"
+".skp" = "SketchUp"
+".blend" = "Blender"
+".stl" = "3D 模型"
+".obj" = "3D 模型"
+".fbx" = "3D 模型"
+".torrent" = "下载工具"
+".lnk" = "快捷方式"
+".url" = "快捷方式"

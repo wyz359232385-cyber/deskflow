@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# 运行时产物：含真实文件路径，绝不入库
+reports/
+logs/
+*.jsonl
+_时间线.html
+
+# 本地覆盖配置
+config/local.toml
